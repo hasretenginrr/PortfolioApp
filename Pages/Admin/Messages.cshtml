@@ -1,0 +1,146 @@
+﻿@page
+@model PortfolioBackend.Pages.Admin.MessagesModel
+@{
+    ViewData["Title"] = "Gelen Mesajlar";
+    Layout = "_AdminLayout";
+}
+
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Gelen Mesajlar</h4>
+                <p class="card-description">
+                    Portfolyo sitenizden gönderilen iletişim formu mesajları.
+                </p>
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Gönderen</th>
+                                <th>Email</th>
+                                <th>Konu</th>
+                                <th>Tarih</th>
+                                <th>Eylem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messagesTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalTitle">Mesaj Detayı</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Gönderen:</strong> <span id="modalMsgName"></span></p>
+                <p><strong>Email:</strong> <span id="modalMsgEmail"></span></p>
+                <p><strong>Konu:</strong> <span id="modalMsgSubject"></span></p>
+                <hr>
+                <strong>Mesaj:</strong>
+                <p id="modalMsgBody" style="white-space: pre-wrap;"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // API endpoint'inizi doğrulayın (örn: /api/contactmessages)
+        const API_URL_MESSAGES = "/api/contactMessages";
+        const tableBody = document.getElementById("messagesTableBody");
+        const modal = $('#messageModal');
+
+        // Tüm mesajları tutmak için bir önbellek (cache)
+        let messageCache = [];
+
+        // --- 1. LİSTELEME (GET) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMessages();
+        });
+
+        async function loadMessages() {
+            try {
+                // GET işlemi için ApiKey gerekmiyor
+                const response = await fetch(API_URL_MESSAGES);
+                if (!response.ok) throw new Error("Mesajlar çekilemedi.");
+
+                const messages = await response.json();
+                messageCache = messages; // Mesajları önbelleğe al
+
+                tableBody.innerHTML = ''; // Tabloyu temizle
+
+                if (messages.length === 0) {
+                     tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Gelen mesaj bulunamadı.</td></tr>';
+                     return;
+                }
+
+                // En yeni mesajın en üstte görünmesi için diziyi tersine çevir
+                messages.reverse();
+
+                messages.forEach(msg => {
+                    const sentDate = new Date(msg.sentAt).toLocaleString('tr-TR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    const row = `
+                        <tr>
+                            <td>${msg.name}</td>
+                            <td>${msg.email}</td>
+                            <td>${msg.subject}</td>
+                            <td>${sentDate}</td>
+                            <td>
+                                <button class="btn btn-info btn-sm btn-view" data-id="${msg.id}">Görüntüle</button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error('Hata:', error);
+                tableBody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Veriler yüklenemedi.</td></tr>`;
+            }
+        }
+
+        // --- 2. MESAJI GÖRÜNTÜLEME ---
+        // Tablodaki "Görüntüle" butonlarına tıklanınca
+        tableBody.addEventListener('click', (event) => {
+            if (event.target.classList.contains('btn-view')) {
+                const idToView = parseInt(event.target.getAttribute('data-id'));
+
+                // Mesajı API'den tekrar çekmek yerine önbellekten (cache) bul
+                const message = messageCache.find(m => m.id === idToView);
+
+                if (message) {
+                    // Modal'ın içini doldur
+                    document.getElementById("modalMsgName").innerText = message.name;
+                    document.getElementById("modalMsgEmail").innerText = message.email;
+                    document.getElementById("modalMsgSubject").innerText = message.subject;
+                    document.getElementById("modalMsgBody").innerText = message.message;
+
+                    // Modalı aç
+                    modal.modal('show');
+                }
+            }
+        });
+
+    </script>
+}

@@ -1,0 +1,266 @@
+﻿@page
+@model PortfolioBackend.Pages.Admin.EducationModel
+@{
+    ViewData["Title"] = "Eğitim Yönetimi";
+    Layout = "_AdminLayout";
+}
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Eğitim Bilgileri</h4>
+                <p class="card-description">
+                    Mevcut eğitim bilgilerinizi buradan yönetebilirsiniz.
+                </p>
+
+                <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#educationModal" id="btnAddNew">
+                    Yeni Eğitim Ekle
+                </button>
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Okul</th>
+                                <th>Bölüm</th>
+                                <th>Derece</th>
+                                <th>Tarih Aralığı</th>
+                                <th>Konum</th>
+                                <th>Eylemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="educationTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="educationModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Eğitim Yönetimi</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <form id="educationForm">
+                    <input type="hidden" id="educationId">
+
+                    <div class="form-group">
+                        <label for="educationSchool">Okul</label>
+                        <input type="text" class="form-control" id="educationSchool" placeholder="Okul Adı">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="educationDepartment">Bölüm</label>
+                        <input type="text" class="form-control" id="educationDepartment" placeholder="örn: Bilgisayar Mühendisliği">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="educationDegree">Derece</label>
+                        <input type="text" class="form-control" id="educationDegree" placeholder="örn: Lisans">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="educationLocation">Konum</label>
+                        <input type="text" class="form-control" id="educationLocation" placeholder="örn: Kırklareli, Türkiye">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="educationDate">Tarih Aralığı</label>
+                        <input type="text" class="form-control" id="educationDate" placeholder="örn: 2020 - 2024">
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnSaveEducation">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const API_URL_EDUCATIONS = "/api/educations";
+        const tableBody = document.getElementById("educationTableBody");
+        const modal = $('#educationModal');
+        const modalTitle = document.getElementById("modalTitle");
+
+        // !! GÜNCELLEME: API Anahtarınızı buraya girin
+        const MY_API_KEY = "hasret9050!";
+
+        // !! GÜNCELLEME: API'nizin beklediği başlık adı
+        const API_KEY_HEADER = "X-API-Key";
+        // Veya "Authorization" (eğer "Bearer <key>" ise değeri "Bearer " + MY_API_KEY yapın)
+
+
+        // --- 1. LİSTELEME (GET) ---
+        // Bu fonksiyonda değişiklik yok, GET işlemi key istemiyor.
+        document.addEventListener('DOMContentLoaded', () => {
+            loadEducations();
+        });
+
+        async function loadEducations() {
+            try {
+                const response = await fetch(API_URL_EDUCATIONS);
+                const educations = await response.json();
+
+                tableBody.innerHTML = ''; // Tabloyu temizle
+
+                if (educations.length === 0) {
+                     tableBody.innerHTML = '<tr><td colspan="6" class="text-center">Kayıt bulunamadı.</td></tr>';
+                     return;
+                }
+
+                educations.forEach(edu => {
+                    const row = `
+                        <tr>
+                            <td>${edu.school}</td>
+                            <td>${edu.department}</td>
+                            <td>${edu.degree}</td>
+                            <td>${edu.date}</td>
+                            <td>${edu.location}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm btn-edit" data-id="${edu.id}">Düzenle</button>
+                                <button class="btn btn-danger btn-sm btn-delete" data-id="${edu.id}">Sil</button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error('Hata:', error);
+                tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Veriler yüklenemedi.</td></tr>`;
+            }
+        }
+
+        // --- 2. YENİ EKLEME (CREATE) ---
+        // Bu fonksiyonda değişiklik yok.
+        document.getElementById("btnAddNew").addEventListener('click', () => {
+            resetForm();
+            modalTitle.innerText = "Yeni Eğitim Ekle";
+        });
+
+        // --- 3. DÜZENLEME (UPDATE) & 4. SİLME (DELETE) ---
+        // !! GÜNCELLEME: İki listener tek fonksiyonda birleştirildi.
+        tableBody.addEventListener('click', async (event) => {
+            const targetButton = event.target.closest('button');
+            if (!targetButton) return;
+
+            // --- DÜZENLEME (GET /id) ---
+            // Bu (GET) işleminde key gerekmediği için değişiklik yok.
+            if (targetButton.classList.contains('btn-edit')) {
+                const idToEdit = targetButton.getAttribute('data-id');
+                try {
+                    const response = await fetch(`${API_URL_EDUCATIONS}/${idToEdit}`);
+                    if (!response.ok) throw new Error("Kayıt bulunamadı");
+
+                    const data = await response.json();
+
+                    document.getElementById("educationId").value = data.id;
+                    document.getElementById("educationSchool").value = data.school;
+                    document.getElementById("educationDepartment").value = data.department;
+                    document.getElementById("educationDegree").value = data.degree;
+                    document.getElementById("educationLocation").value = data.location;
+                    document.getElementById("educationDate").value = data.date;
+
+                    modalTitle.innerText = "Eğitimi Düzenle";
+                    modal.modal('show');
+
+                } catch (error) {
+                    console.error("Veri çekme hatası:", error);
+                    alert("Eğitim bilgileri yüklenemedi.");
+                }
+            }
+
+            // --- SİLME (DELETE) ---
+            if (targetButton.classList.contains('btn-delete')) {
+                const idToDelete = targetButton.getAttribute('data-id');
+
+                if (confirm(`ID: ${idToDelete} olan kaydı silmek istediğinize emin misiniz?`)) {
+                    try {
+                        // !! GÜNCELLEME: fetch isteğine 'headers' eklendi
+                        const response = await fetch(`${API_URL_EDUCATIONS}/${idToDelete}`, {
+                            method: 'DELETE',
+                            headers: {
+                                [API_KEY_HEADER]: MY_API_KEY
+                            }
+                        });
+
+                        if (response.ok) {
+                            alert('Kayıt başarıyla silindi.');
+                            loadEducations(); // Tabloyu yenile
+                        } else {
+                            alert('Hata: Kayıt silinemedi. (Yetki hatası olabilir)');
+                        }
+                    } catch (error) {
+                        console.error('Silme hatası:', error);
+                        alert('Sunucuya bağlanırken bir hata oluştu.');
+                    }
+                }
+            }
+        });
+
+
+        // --- 5. KAYDETME (CREATE veya UPDATE) ---
+        document.getElementById("btnSaveEducation").addEventListener("click", async () => {
+            const id = document.getElementById("educationId").value;
+            const educationData = {
+                school: document.getElementById("educationSchool").value,
+                department: document.getElementById("educationDepartment").value,
+                degree: document.getElementById("educationDegree").value,
+                location: document.getElementById("educationLocation").value,
+                date: document.getElementById("educationDate").value
+            };
+
+            let httpMethod = 'POST';
+            let fullUrl = API_URL_EDUCATIONS;
+
+            if (id) {
+                httpMethod = 'PUT';
+                fullUrl = `${API_URL_EDUCATIONS}/${id}`;
+                educationData.id = parseInt(id);
+            }
+
+            try {
+                // !! GÜNCELLEME: fetch isteğine 'headers' eklendi
+                const response = await fetch(fullUrl, {
+                    method: httpMethod,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        [API_KEY_HEADER]: MY_API_KEY
+                    },
+                    body: JSON.stringify(educationData)
+                });
+
+                if (response.ok) {
+                    alert('İşlem başarılı!');
+                    modal.modal('hide');
+                    loadEducations();
+                } else {
+                    const errorData = await response.json();
+                    alert('Hata oluştu: ' + JSON.stringify(errorData.errors || errorData));
+                }
+            } catch (error) {
+                console.error('Kaydetme hatası:', error);
+                alert('Sunucuya bağlanırken bir hata oluştu.');
+            }
+        });
+
+        // --- Form Temizleme ---
+        // Bu fonksiyonda değişiklik yok.
+        function resetForm() {
+            document.getElementById("educationForm").reset();
+            document.getElementById("educationId").value = "";
+        }
+
+    </script>
+}

@@ -1,0 +1,248 @@
+﻿@page
+@model PortfolioBackend.Pages.Admin.SkillsModel
+@{
+    ViewData["Title"] = "Yetenek Yönetimi";
+    Layout = "_AdminLayout";
+}
+
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Yetenekler</h4>
+                <p class="card-description">
+                    Mevcut yeteneklerinizi buradan yönetebilirsiniz.
+                </p>
+
+                <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#skillModal" id="btnAddNew">
+                    Yeni Yetenek Ekle
+                </button>
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Yetenek Adı</th>
+                                <th>Seviye (%)</th>
+                                <th>Eylemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="skillTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="skillModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Yetenek Yönetimi</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <form id="skillForm">
+                    <input type="hidden" id="skillId">
+
+                    <div class="form-group">
+                        <label for="skillName">Yetenek Adı</label>
+                        <input type="text" class="form-control" id="skillName" placeholder="örn: C#">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="skillLevel">Seviye (0-100 arası)</label>
+                        <input type="number" class="form-control" id="skillLevel" placeholder="örn: 90" min="0" max="100">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnSaveSkill">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const API_URL_SKILLS = "/api/skills";
+        const tableBody = document.getElementById("skillTableBody");
+        const modal = $('#skillModal');
+        const modalTitle = document.getElementById("modalTitle");
+
+        // !! GÜNCELLEME: API Anahtarınızı buraya girin
+        const MY_API_KEY = "hasret9050!";
+
+        // !! GÜNCELLEME: API'nizin beklediği başlık adı
+        const API_KEY_HEADER = "X-API-Key";
+        // Veya "Authorization" (eğer "Bearer <key>" ise değeri "Bearer " + MY_API_KEY yapın)
+
+
+        // --- 1. LİSTELEME (GET) ---
+        // Bu fonksiyonda değişiklik yok, GET işlemi key istemiyor.
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSkills();
+        });
+
+        async function loadSkills() {
+            try {
+                const response = await fetch(API_URL_SKILLS);
+                const skills = await response.json();
+
+                tableBody.innerHTML = ''; // Tabloyu temizle
+
+                if (skills.length === 0) {
+                     tableBody.innerHTML = '<tr><td colspan="3" class="text-center">Kayıt bulunamadı.</td></tr>';
+                     return;
+                }
+
+                skills.forEach(skill => {
+                    const row = `
+                        <tr>
+                            <td>${skill.name}</td>
+                            <td>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: ${skill.level}%" aria-valuenow="${skill.level}" aria-valuemin="0" aria-valuemax="100">
+                                        ${skill.level}%
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="btn btn-warning btn-sm btn-edit" data-id="${skill.id}">Düzenle</button>
+                                <button class="btn btn-danger btn-sm btn-delete" data-id="${skill.id}">Sil</button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error('Hata:', error);
+                tableBody.innerHTML = `<tr><td colspan="3" class="text-center text-danger">Veriler yüklenemedi.</td></tr>`;
+            }
+        }
+
+        // --- 2. YENİ EKLEME (CREATE) ---
+        // Bu fonksiyonda değişiklik yok.
+        document.getElementById("btnAddNew").addEventListener('click', () => {
+            resetForm();
+            modalTitle.innerText = "Yeni Yetenek Ekle";
+        });
+
+        // --- 3. DÜZENLEME (UPDATE) & 4. SİLME (DELETE) ---
+        tableBody.addEventListener('click', async (event) => {
+            const targetButton = event.target.closest('button');
+            if (!targetButton) return;
+
+            // --- DÜZENLEME (GET /id) ---
+            // Bu fonksiyonda değişiklik yok, GET işlemi key istemiyor.
+            if (targetButton.classList.contains('btn-edit')) {
+                const idToEdit = targetButton.getAttribute('data-id');
+                try {
+                    const response = await fetch(`${API_URL_SKILLS}/${idToEdit}`);
+                    if (!response.ok) throw new Error("Kayıt bulunamadı");
+
+                    const data = await response.json();
+
+                    document.getElementById("skillId").value = data.id;
+                    document.getElementById("skillName").value = data.name;
+                    document.getElementById("skillLevel").value = data.level;
+
+                    modalTitle.innerText = "Yetenek Düzenle";
+                    modal.modal('show');
+
+                } catch (error) {
+                    console.error("Veri çekme hatası:", error);
+                    alert("Yetenek bilgisi yüklenemedi.");
+                }
+            }
+
+            // --- SİLME (DELETE) ---
+            if (targetButton.classList.contains('btn-delete')) {
+                const idToDelete = targetButton.getAttribute('data-id');
+
+                if (confirm(`ID: ${idToDelete} olan kaydı silmek istediğinize emin misiniz?`)) {
+                    try {
+                        // !! GÜNCELLEME: fetch isteğine 'headers' eklendi
+                        const response = await fetch(`${API_URL_SKILLS}/${idToDelete}`, {
+                            method: 'DELETE',
+                            headers: {
+                                [API_KEY_HEADER]: MY_API_KEY
+                            }
+                        });
+
+                        if (response.ok) {
+                            alert('Kayıt başarıyla silindi.');
+                            loadSkills(); // Tabloyu yenile
+                        } else {
+                            alert('Hata: Kayıt silinemedi. (Yetki hatası olabilir)');
+                        }
+                    } catch (error) {
+                        console.error('Silme hatası:', error);
+                        alert('Sunucuya bağlanırken bir hata oluştu.');
+                    }
+                }
+            }
+        });
+
+        // --- 5. KAYDETME (CREATE veya UPDATE) ---
+        document.getElementById("btnSaveSkill").addEventListener("click", async () => {
+            const id = document.getElementById("skillId").value;
+            const skillData = {
+                name: document.getElementById("skillName").value,
+                level: parseInt(document.getElementById("skillLevel").value)
+            };
+
+            if (!skillData.name || isNaN(skillData.level) || skillData.level < 0 || skillData.level > 100) {
+                alert("Lütfen tüm alanları doğru girdiğinizden emin olun (Seviye 0-100 arası).");
+                return;
+            }
+
+            let httpMethod = 'POST';
+            let fullUrl = API_URL_SKILLS;
+
+            if (id) {
+                httpMethod = 'PUT';
+                fullUrl = `${API_URL_SKILLS}/${id}`;
+                skillData.id = parseInt(id);
+            }
+
+            try {
+                // !! GÜNCELLEME: fetch isteğine 'headers' eklendi
+                const response = await fetch(fullUrl, {
+                    method: httpMethod,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        [API_KEY_HEADER]: MY_API_KEY
+                    },
+                    body: JSON.stringify(skillData)
+                });
+
+                if (response.ok) {
+                    alert('İşlem başarılı!');
+                    modal.modal('hide');
+                    loadSkills();
+                } else {
+                    const errorData = await response.json();
+                    alert('Hata oluştu: ' + JSON.stringify(errorData.errors || errorData));
+                }
+            } catch (error) {
+                console.error('Kaydetme hatası:', error);
+                alert('Sunucuya bağlanırken bir hata oluştu.');
+            }
+        });
+
+        // --- Form Temizleme ---
+        // Bu fonksiyonda değişiklik yok.
+        function resetForm() {
+            document.getElementById("skillForm").reset();
+            document.getElementById("skillId").value = "";
+        }
+
+    </script>
+}

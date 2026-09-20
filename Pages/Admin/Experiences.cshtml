@@ -1,0 +1,289 @@
+﻿@page
+@model PortfolioBackend.Pages.Admin.ExperiencesModel
+@{
+    ViewData["Title"] = "Deneyim Yönetimi";
+    Layout = "_AdminLayout";
+}
+<div class="main-panel">
+    <div class="content-wrapper">
+
+        <div class="row">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Deneyimler</h4>
+                        <p class="card-description">
+                            Mevcut deneyimlerinizi buradan yönetebilirsiniz.
+                        </p>
+
+                        <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#experienceModal" id="btnAddNew">
+                            Yeni Deneyim Ekle
+                        </button>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Şirket</th>
+                                        <th>Rol</th>
+                                        <th>Konum</th>
+                                        <th>Başlangıç Tarihi</th>
+                                        <th>Bitiş Tarihi</th>
+                                        <th>Eylemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="experienceTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="experienceModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalTitle">Deneyim Yönetimi</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <form id="experienceForm">
+                            <input type="hidden" id="experienceId">
+
+                            <div class="form-group">
+                                <label for="experienceCompany">Şirket Adı</label>
+                                <input type="text" class="form-control" id="experienceCompany" placeholder="Şirket Adı">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="experienceRole">Rol (Pozisyon)</label>
+                                <input type="text" class="form-control" id="experienceRole" placeholder="örn: .NET Developer">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="experienceLocation">Konum</label>
+                                <input type="text" class="form-control" id="experienceLocation" placeholder="örn: İstanbul, Türkiye">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="experienceDescription">Açıklama</label>
+                                <textarea class="form-control" id="experienceDescription" rows="4" placeholder="Görevin tanımı..."></textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="experienceStartDate">Başlangıç Tarihi</label>
+                                        <input type="date" class="form-control" id="experienceStartDate">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="experienceEndDate">Bitiş Tarihi (Boşsa "Halen")</label>
+                                        <input type="date" class="form-control" id="experienceEndDate">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                        <button type="button" class="btn btn-primary" id="btnSaveExperience">Kaydet</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@section Scripts {
+        <script>
+            const API_URL_EXPERIENCES = "/api/experiences";
+            const tableBody = document.getElementById("experienceTableBody");
+            const modal = $('#experienceModal');
+            const modalTitle = document.getElementById("modalTitle");
+
+            // !! GÜNCELLEME: API Anahtarınızı buraya girin
+            const MY_API_KEY = "hasret9050!";
+
+            // !! GÜNCELLEME: API'nizin beklediği başlık adı
+            const API_KEY_HEADER = "X-API-Key";
+            // Veya "Authorization" (eğer "Bearer <key>" ise değeri "Bearer " + MY_API_KEY yapın)
+
+
+            // --- 1. LİSTELEME (GET) ---
+            // Bu fonksiyonda değişiklik yok, GET işlemi key istemiyor.
+            document.addEventListener('DOMContentLoaded', () => {
+                loadExperiences();
+            });
+
+            async function loadExperiences() {
+                try {
+                    const response = await fetch(API_URL_EXPERIENCES);
+                    const experiences = await response.json();
+
+                    tableBody.innerHTML = '';
+
+                    if (experiences.length === 0) {
+                         tableBody.innerHTML = '<tr><td colspan="6" class="text-center">Kayıt bulunamadı.</td></tr>';
+                         return;
+                    }
+
+                    experiences.forEach(exp => {
+                        const startDate = new Date(exp.startDate).toLocaleDateString('tr-TR');
+                        const endDate = exp.endDate
+                                      ? new Date(exp.endDate).toLocaleDateString('tr-TR')
+                                      : '<span class="badge badge-success">Halen</span>';
+
+                        const row = `
+                            <tr>
+                                <td>${exp.company}</td>
+                                <td>${exp.role}</td>
+                                <td>${exp.location}</td>
+                                <td>${startDate}</td>
+                                <td>${endDate}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm btn-edit" data-id="${exp.id}">Düzenle</button>
+                                    <button class="btn btn-danger btn-sm btn-delete" data-id="${exp.id}">Sil</button>
+                                </td>
+                            </tr>
+                        `;
+                        tableBody.innerHTML += row;
+                    });
+                } catch (error) {
+                    console.error('Hata:', error);
+                    tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Veriler yüklenemedi.</td></tr>`;
+                }
+            }
+
+            // --- 2. YENİ EKLEME (CREATE) ---
+            // Bu fonksiyonda değişiklik yok.
+            document.getElementById("btnAddNew").addEventListener('click', () => {
+                resetForm();
+                modalTitle.innerText = "Yeni Deneyim Ekle";
+            });
+
+            // --- 3. DÜZENLEME (UPDATE) & 4. SİLME (DELETE) ---
+            // !! GÜNCELLEME: İki listener tek fonksiyonda birleştirildi.
+            tableBody.addEventListener('click', async (event) => {
+                const targetButton = event.target.closest('button');
+                if (!targetButton) return;
+
+                // --- DÜZENLEME (GET /id) ---
+                // Bu (GET) işleminde key gerekmediği için değişiklik yok.
+                if (targetButton.classList.contains('btn-edit')) {
+                    const idToEdit = targetButton.getAttribute('data-id');
+                    try {
+                        const response = await fetch(`${API_URL_EXPERIENCES}/${idToEdit}`);
+                        if (!response.ok) throw new Error("Kayıt bulunamadı");
+
+                        const data = await response.json();
+
+                        document.getElementById("experienceId").value = data.id;
+                        document.getElementById("experienceCompany").value = data.company;
+                        document.getElementById("experienceRole").value = data.role;
+                        document.getElementById("experienceLocation").value = data.location;
+                        document.getElementById("experienceDescription").value = data.description;
+                        document.getElementById("experienceStartDate").value = data.startDate.split('T')[0];
+                        if (data.endDate) {
+                            document.getElementById("experienceEndDate").value = data.endDate.split('T')[0];
+                        } else {
+                            document.getElementById("experienceEndDate").value = "";
+                        }
+
+                        modalTitle.innerText = "Deneyimi Düzenle";
+                        modal.modal('show');
+
+                    } catch (error) {
+                        console.error("Veri çekme hatası:", error);
+                        alert("Deneyim bilgileri yüklenemedi.");
+                    }
+                }
+
+                // --- SİLME (DELETE) ---
+                if (targetButton.classList.contains('btn-delete')) {
+                    const idToDelete = targetButton.getAttribute('data-id');
+
+                    if (confirm(`ID: ${idToDelete} olan kaydı silmek istediğinize emin misiniz?`)) {
+                        try {
+                            // !! GÜNCELLEME: fetch isteğine 'headers' eklendi
+                            const response = await fetch(`${API_URL_EXPERIENCES}/${idToDelete}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    [API_KEY_HEADER]: MY_API_KEY
+                                }
+                            });
+
+                            if (response.ok) {
+                                alert('Kayıt başarıyla silindi.');
+                                loadExperiences(); // Tabloyu yenile
+                            } else {
+                                alert('Hata: Kayıt silinemedi. (Yetki hatası olabilir)');
+                            }
+                        } catch (error) {
+                            console.error('Silme hatası:', error);
+                            alert('Sunucuya bağlanırken bir hata oluştu.');
+                        }
+                    }
+                }
+            });
+
+            // --- 5. KAYDETME (CREATE veya UPDATE) ---
+            document.getElementById("btnSaveExperience").addEventListener("click", async () => {
+                const id = document.getElementById("experienceId").value;
+                const experienceData = {
+                    company: document.getElementById("experienceCompany").value,
+                    role: document.getElementById("experienceRole").value,
+                    location: document.getElementById("experienceLocation").value,
+                    description: document.getElementById("experienceDescription").value,
+                    startDate: document.getElementById("experienceStartDate").value,
+                    endDate: document.getElementById("experienceEndDate").value || null
+                };
+
+                let httpMethod = 'POST';
+                let fullUrl = API_URL_EXPERIENCES;
+
+                if (id) {
+                    httpMethod = 'PUT';
+                    fullUrl = `${API_URL_EXPERIENCES}/${id}`;
+                    experienceData.id = parseInt(id);
+                }
+
+                try {
+                    // !! GÜNCELLEME: fetch isteğine 'headers' eklendi
+                    const response = await fetch(fullUrl, {
+                        method: httpMethod,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            [API_KEY_HEADER]: MY_API_KEY
+                        },
+                        body: JSON.stringify(experienceData)
+                    });
+
+                    if (response.ok) {
+                        alert('İşlem başarılı!');
+                        modal.modal('hide');
+                        loadExperiences();
+                    } else {
+                        const errorData = await response.json();
+                        alert('Hata oluştu: ' + JSON.stringify(errorData.errors || errorData));
+                    }
+                } catch (error) {
+                    console.error('Kaydetme hatası:', error);
+                    alert('Sunucuya bağlanırken bir hata oluştu.');
+                }
+            });
+
+            // --- Form Temizleme ---
+            // Bu fonksiyonda değişiklik yok.
+            function resetForm() {
+                document.getElementById("experienceForm").reset();
+                document.getElementById("experienceId").value = "";
+            }
+
+        </script>
+}

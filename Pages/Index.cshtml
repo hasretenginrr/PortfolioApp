@@ -1,0 +1,729 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<!--welcome-hero start -->
+<section id="welcome-hero" class="welcome-hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <div class="header-text">
+                    <h2>MERHABA <span>,</span> BEN <br> HASRET NİSA<br> ENGİNER <span>.</span></h2>
+                    <p>BİLGİSAYAR MÜHENDİSİ</p>
+                    <a href="https://drive.google.com/file/d/1wm7Y3kPuwh9B09m9gis-S-fG6M1gIGEx/view?usp=sharing" download>CV için</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--welcome-hero end -->
+<!--about start -->
+<section id="about" class="about">
+    <div class="section-heading text-center">
+        <h2>BENİM HAKKIMDA</h2>
+    </div>
+    <div class="container">
+        <div class="about-content">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="single-about-txt">
+                        <h3 id="about-heading">
+                            Yükleniyor...
+                        </h3>
+                        <p id="about-description">
+                            Açıklama yükleniyor...
+                        </p>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="single-about-add-info">
+                                    <h3>Telefon</h3>
+                                    <p id="about-phone">987-123-6547</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="single-about-add-info">
+                                    <h3>Mail</h3>
+                                    <p id="about-mail">browny@info.com</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-offset-1 col-sm-5">
+                    <div class="single-about-img">
+                        <img src="~/browny-master/assets/images/about/linkedin1.jpg" alt="profile_image">
+                        <div class="about-list-icon">
+                            <ul>
+                                <li>
+                                    <a href="https://www.linkedin.com/in/hasret-nisa-enginer-915730244/"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                                </li>
+                                <li>
+                                    <a href="https://github.com/hasretenginrr"><i class="fa fa-github" aria-hidden="true"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!--about end -->
+<!--education start -->
+<section id="education" class="education">
+    <div class="section-heading text-center">
+        <h2>EĞİTİM BİLGİLERİ</h2>
+    </div>
+    <div class="container">
+        <div class="education-horizontal-timeline">
+            <div class="row" id="education-container">
+                <div class="col-md-12 text-center">
+                    <p>Eğitim bilgileri yükleniyor...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--education end -->
+<!--skills start -->
+<section id="skills" class="skills">
+    <div class="skill-content">
+        <div class="section-heading text-center">
+            <h2>BECERİLER</h2>
+        </div>
+        <div class="container">
+            <div class="row" id="skill-container">
+                <div class="col-md-12 text-center">
+                    <p>Beceriler yükleniyor...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--skills end -->
+<!--experience start -->
+<section id="experience" class="experience">
+    <div class="section-heading text-center">
+        <h2>DENEYİMLER</h2>
+    </div>
+    <div class="container">
+        <div class="row" id="experience-list-container">
+            <div class="col-md-12 text-center">
+                <p>Deneyim bilgileri yükleniyor...</p>
+            </div>
+        </div>
+    </div>
+</section>
+<!--experience end -->
+<!--Sertifika start -->
+<section id="profiles" class="profiles">
+    <div class="container">
+
+        <div class="section-heading text-center">
+            <h2>SERTİFİKALAR</h2>
+        </div>
+
+        <div id="certificates-container" class="owl-carousel owl-theme">
+
+            <div class="col-md-12 text-center">
+                <p>Sertifikalar yükleniyor...</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!--Sertifika end -->
+<section id="portfolio" class="portfolio">
+    <div class="portfolio-details">
+        <div class="section-heading text-center">
+            <h2>PROJELER</h2>
+        </div>
+        <div class="container">
+            <div class="portfolio-content">
+                <div class="isotope">
+                    <div class="row" id="portfolio-container">
+                        <div class="col-md-12 text-center">
+                            <p>Projeler yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--contact start -->
+<section id="contact" class="contact">
+    <div class="section-heading text-center">
+        <h2>BENİMLE İLETİŞİME GEÇİN!</h2>
+    </div>
+    <div class="container">
+        <div class="contact-content">
+            <div class="row">
+                <div class="col-md-offset-1 col-md-5 col-sm-6">
+                    <div class="single-contact-box">
+                        <div class="contact-form">
+
+                            <form method="post" action="/api/ContactMessages" id="contactForm">
+
+                                <div class="row">
+                                    <div class="col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" id="name" placeholder="İsim*" name="Name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <input type="email" class="form-control" id="email" placeholder="Mail*" name="Email" required>
+                                        </div>
+                                    </div>
+                                </div><div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" id="subject" placeholder="Konu" name="Subject">
+                                        </div>
+                                    </div>
+                                </div><div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <textarea class="form-control" rows="8" id="comment" placeholder="Mesaj*" name="Message"></textarea>
+                                        </div>
+                                    </div>
+                                </div><div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="single-contact-btn">
+                                            <button class="contact-btn" type="submit">
+                                                Gönder
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-offset-1 col-md-5 col-sm-6">
+                    <div class="single-contact-box">
+                        <div class="contact-adress">
+                            <div class="contact-add-head">
+                                <h3>Hasret Nisa Enginer</h3>
+                                <p>Bilgisayar Mühendisi</p>
+                            </div>
+                            <div class="contact-add-info">
+                                <div class="single-contact-add-info">
+                                    <h3>email</h3>
+                                    <p>hasretenginer@gmail.com</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hm-foot-icon">
+                            <ul>
+                                <li><a href="https://www.linkedin.com/in/hasret-nisa-enginer-915730244/"><i class="fa fa-linkedin"></i></a></li>
+                                <li><a href="https://github.com/hasretenginrr"><i class="fa fa-github"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--contact end -->
+<div class="modal fade" id="projectDetailModal" tabindex="-1" role="dialog" aria-labelledby="projectDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="projectDetailModalLabel">Proje Detayları Yükleniyor...</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="border: none; background: transparent; font-size: 1.5rem;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-project-image" style="text-align: center; margin-bottom: 20px;"></div>
+                <div id="modal-project-description"></div>
+            </div>
+            <div class="modal-footer">
+                <a id="modal-project-link" href="#" target="_blank" class="btn btn-primary" style="background: #b636ff; border-color: #b636ff;">Projeye Git</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const API_URL = "/api/Users";
+
+    async function loadAboutMe() {
+
+        try {
+            const response = await fetch(API_URL);
+
+            if (!response.ok) {
+                throw new Error(`HTTP Hata kodu: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const userData = Array.isArray(data) ? data[0] : data;
+            const headingElement = document.getElementById('about-heading');
+           const descriptionElement = document.getElementById('about-description');
+            const phoneElement = document.getElementById('about-phone'); 
+            const mailElement = document.getElementById('about-mail');   
+
+            if (headingElement) {
+                headingElement.innerHTML = userData.title || "Başlık Yüklenemedi.";
+            }
+            if (descriptionElement) {
+                descriptionElement.innerHTML = userData.bio || "Açıklama Yüklenemedi.";
+            }
+            if (phoneElement) {
+                phoneElement.innerHTML = userData.phone || "Telefon bilgisi yok";
+            }
+            if (mailElement) {
+                mailElement.innerHTML = userData.email || "Email bilgisi yok";
+            }
+        } catch (error) {
+            console.error("Hakkımda verisi yüklenirken bir sorun oluştu:", error);
+            document.getElementById('about-description').textContent = "Hakkımda bilgileri şu an yüklenemiyor. Lütfen daha sonra tekrar deneyin.";
+        }
+    }
+    loadAboutMe();
+
+    //-------------------------- educaiton
+     const EDUCATION_API_URL = "/api/educations";
+
+    async function loadEducation() {
+        const container = document.getElementById('education-container');
+        container.innerHTML = ''; // Önyükleme mesajını temizle
+
+        try {
+            const response = await fetch(EDUCATION_API_URL);
+
+            if (!response.ok) {
+                throw new Error(`HTTP Hata kodu: ${response.status}`);
+            }
+
+            const educationData = await response.json();
+
+            if (!Array.isArray(educationData) || educationData.length === 0) {
+                 container.innerHTML = '<div class="col-md-12 text-center"><p>Kayıtlı eğitim bilgisi bulunamadı.</p></div>';
+                 return;
+            }
+            educationData.forEach(edu => {
+                const year = edu.date || "Tarih Yok"; 
+                const department = edu.department || "Bölüm Yok"; 
+                const school = edu.school || "Okul Yok"; 
+                const location = edu.location || "Konum Yok";   
+                const description = edu.degree || "degree yok"; 
+
+                const htmlContent = `
+                    <div class="col-sm-4">
+                        <div class="single-horizontal-timeline">
+                            <div class="experience-time">
+                                <h2>${year}</h2>
+                                <h3>${department}</h3>
+                            </div>
+                            <div class="timeline-horizontal-border">
+                                <i class="fa fa-circle" aria-hidden="true"></i>
+                                <span class="single-timeline-horizontal"></span>
+                            </div>
+                            <div class="timeline">
+                                <div class="timeline-content">
+                                    <h4 class="title">${school}</h4>
+                                    <h5>${location}</h5>
+                                    <p class="description">Mezuniyet derecesi: ${description}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += htmlContent;
+            });
+
+        } catch (error) {
+            console.error("Eğitim verisi yüklenirken bir sorun oluştu:", error);
+            container.innerHTML = '<div class="col-md-12 text-center"><p>Eğitim bilgileri yüklenemedi. (Hata: CORS veya API)</p></div>';
+        }
+    }
+
+    loadEducation();
+
+    // ------------------------------------------skils
+       const SKILLS_API_URL = "/api/skills";
+
+    async function loadSkills() {
+        const container = document.getElementById('skill-container');
+        container.innerHTML = '';
+
+        try {
+            const response = await fetch(SKILLS_API_URL);
+            if (!response.ok) {
+                throw new Error(`HTTP Hata kodu: ${response.status}`);
+            }
+            const skillsData = await response.json();
+
+            if (!Array.isArray(skillsData) || skillsData.length === 0) {
+                 container.innerHTML = '<div class="col-md-12 text-center"><p>Kayıtlı beceri bilgisi bulunamadı.</p></div>';
+                 return;
+            }
+
+            const totalSkills = skillsData.length;
+            const chunkSize = Math.ceil(totalSkills / 4);
+
+            const col1 = document.createElement('div');
+            col1.className = 'col-md-3';
+            const col2 = document.createElement('div');
+            col2.className = 'col-md-3';
+            const col3 = document.createElement('div');
+            col3.className = 'col-md-3';
+            const col4 = document.createElement('div');
+            col4.className = 'col-md-3';
+
+
+            skillsData.forEach((skill, index) => {
+                const skillName = skill.name || "Becerinin Adı";
+                const skillValue = skill.level || 0;
+
+                const skillHtml = `
+                    <div class="single-skill-content" style="padding-top: 10px;">
+                        <div class="barWrapper">
+                            <span class="progressText">${skillName}</span>
+                            <div class="single-progress-txt" style="margin-bottom: 5px;">
+                                <div class="progress" style="margin-top: 10px; margin-bottom: 15px;">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="${skillValue}" aria-valuemin="10" aria-valuemax="100" style="width: ${skillValue}%;">
+                                    </div>
+                                </div>
+                                <h3 style="top: 2px;">${skillValue}%</h3>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                if (index < chunkSize) {
+                    col1.innerHTML += skillHtml;
+                } else if (index < chunkSize * 2) {
+                    col2.innerHTML += skillHtml;
+                } else if (index < chunkSize * 3) {
+                    col3.innerHTML += skillHtml;
+                } else {
+                    col4.innerHTML += skillHtml;
+                }
+            });
+
+            container.appendChild(col1);
+            container.appendChild(col2);
+            container.appendChild(col3);
+            container.appendChild(col4);
+
+        } catch (error) {
+            console.error("Beceri verisi yüklenirken bir sorun oluştu:", error);
+            container.innerHTML = '<div class="col-md-12 text-center"><p>Beceri bilgileri yüklenemedi. CORS veya API kontrolü yapın.</p></div>';
+        }
+    }
+    loadSkills();
+   // -----------------------Experience
+     const EXPERIENCE_API_URL = "/api/experiences";
+
+    async function loadExperiences() {
+        const container = document.getElementById('experience-list-container');
+        container.innerHTML = '';
+
+        try {
+            const response = await fetch(EXPERIENCE_API_URL);
+            if (!response.ok) {
+                throw new Error(`HTTP Hata kodu: ${response.status}`);
+            }
+            const experiencesData = await response.json();
+
+            if (!Array.isArray(experiencesData) || experiencesData.length === 0) {
+                 container.innerHTML = '<div class="col-md-12 text-center"><p>Kayıtlı deneyim bilgisi bulunamadı.</p></div>';
+                 return;
+            }
+
+            const halfIndex = Math.ceil(experiencesData.length / 2);
+
+            const leftCol = document.createElement('div');
+            leftCol.className = 'col-md-6';
+            const rightCol = document.createElement('div');
+            rightCol.className = 'col-md-6';
+
+            experiencesData.forEach((exp, index) => {
+
+                const company = exp.company || "Şirket Adı Yok";
+                const role = exp.role || "Pozisyon Bilgisi Yok";
+                const description = exp.description || "Açıklama Yok";
+
+                const rawStartDate = exp.startDate || "Başlangıç Yok";
+                const rawEndDate = exp.endDate || "Devam Ediyor";
+                const startDate = (rawStartDate !== "Başlangıç Yok" && rawStartDate.length >= 10)
+                                  ? rawStartDate.substring(0, 10)
+                                  : rawStartDate;
+                const endDate = (rawEndDate !== "Devam Ediyor" && rawEndDate.length >= 10)
+                                ? rawEndDate.substring(0, 10)
+                                : rawEndDate;
+
+                const experienceHtml = `
+                    <div class="single-experience-card" style="margin-bottom: 30px; padding: 20px; border-left: 3px solid #b636ff;">
+                        <h4 style="font-size: 18px; margin-bottom: 5px;">${company}</h4>
+                        <h5 style="font-size: 14px; color: #636a82; margin-bottom: 5px;">${role}</h5>
+                        <p style="font-size: 14px; color: #999fb3; margin-top: 10px;">
+                            <i class="fa fa-calendar" aria-hidden="true" style="color: #d92cf9;"></i> ${startDate} / ${endDate}
+                        </p>
+                        <p style="font-size: 14px; line-height: 1.6; margin-top: 15px;">
+                            ${description}
+                        </p>
+                    </div>
+                `;
+
+                if (index < halfIndex) {
+                    leftCol.innerHTML += experienceHtml;
+                } else {
+                    rightCol.innerHTML += experienceHtml;
+                }
+            });
+
+            container.appendChild(leftCol);
+            container.appendChild(rightCol);
+
+        } catch (error) {
+            console.error("Deneyim verisi yüklenirken bir sorun oluştu:", error);
+            container.innerHTML = '<div class="col-md-12 text-center"><p>Deneyim bilgileri yüklenemedi. Lütfen API adresini ve CORS ayarlarını kontrol edin.</p></div>';
+        }
+    }
+
+    loadExperiences();
+   // -------------------------------------- Sertifikalar
+       const CERTIFICATES_API_URL = "/api/certificates";
+
+    function getCertificateIcon(certName) {
+        const nameLower = certName.toLowerCase();
+        if (nameLower.includes('java') || nameLower.includes('android')) return 'fa fa-solid fa-code';
+        if (nameLower.includes('web') || nameLower.includes('html') || nameLower.includes('css')) return 'fa fa-solid fa-laptop-code';
+        if (nameLower.includes('c#') || nameLower.includes('.net')) return 'fa fa-solid fa-terminal';
+        if (nameLower.includes('bootcamp') || nameLower.includes('flutter') || nameLower.includes('dart')) return 'fa fa-solid fa-mobile-alt';
+        if (nameLower.includes('robotik') || nameLower.includes('arduino') || nameLower.includes('iot')) return 'fa fa-solid fa-robot';
+        if (nameLower.includes('udemy')) return 'fa fa-solid fa-certificate';
+
+        return 'fa fa-solid fa-scroll';
+    }
+         async function loadCertificates() {
+        const container = document.getElementById('certificates-container');
+        container.innerHTML = ''; // Temizle
+
+        try {
+            const response = await fetch(CERTIFICATES_API_URL);
+            if (!response.ok) {
+                throw new Error(`HTTP Hata kodu: ${response.status}`);
+            }
+            const certificatesData = await response.json();
+
+            if (!Array.isArray(certificatesData) || certificatesData.length === 0) {
+                container.innerHTML = '<div class="col-md-12 text-center"><p>Kayıtlı sertifika bulunamadı.</p></div>';
+                return;
+            }
+
+            certificatesData.forEach((cert) => {
+                const certName = cert.title || "Sertifika Adı Yok";
+                const certLink = cert.link || "#";
+                const certIcon = getCertificateIcon(certName);
+                const certDescription = cert.description || "Açıklama Yok";
+
+                // --- YENİ VE ŞIK KART HTML'İ (Tüm inline stiller kaldırıldı) ---
+                const certificateHtml = `
+                    <div class="item">
+                        <a href="${certLink}" target="_blank" class="certificate-card-link">
+                            <div class="single-profile certificate-card">
+
+                                <div class="certificate-card-front">
+                                    <i class="${certIcon}"></i>
+                                    <div class="profile-icon-name">${certName}</div>
+                                </div>
+
+                                <div class="certificate-card-overlay">
+                                    <div class="profile-txt-overlay">
+                                        <p>${certDescription}</p>
+                                        <span class="overlay-link-text">Sertifikayı Görüntüle &rarr;</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </a>
+                    </div>
+                `;
+
+                container.innerHTML += certificateHtml;
+            });
+             $('#certificates-container').owlCarousel({
+             loop: certificatesData.length > 1,
+             margin: 30,
+             autoplay: true,
+             autoplayTimeout: 4000,
+             autoplayHoverPause: true,
+             nav: true,
+             items: 1,
+             center: true, // BU KURAL ÇOK ÖNEMLİ
+             navText: [
+                 "<i class='fa fa-solid fa-chevron-left'></i>",
+                 "<i class='fa fa-solid fa-chevron-right'></i>"
+             ]
+         });
+
+        } catch (error) {
+            console.error("Sertifika verisi yüklenirken bir sorun oluştu:", error);
+            container.innerHTML = '<div class="col-md-12 text-center"><p>Sertifikalar yüklenemedi. Lütfen API adresini kontrol edin.</p></div>';
+        }
+    }
+
+    loadCertificates();
+   //-------------------------------------------------- projects
+
+        const PORTFOLIO_API_URL = "/api/projects";
+
+        function showProjectModal(project) {
+
+        document.getElementById('projectDetailModalLabel').textContent = project.title || "Proje Detayları";
+
+        const imageContainer = document.getElementById('modal-project-image');
+        const finalImageUrl = project.imageUrl ? `/images/${project.imageUrl}` : '';
+
+        imageContainer.innerHTML = finalImageUrl
+            ? `<img src="${finalImageUrl}" alt="${project.title}" style="max-width: 100%; height: auto; border-radius: 8px;">`
+            : '';
+
+        document.getElementById('modal-project-description').innerHTML = `<p>${project.description || "Açıklama bulunamadı."}</p>`;
+        document.getElementById('modal-project-link').href = project.link || '#';
+
+    }
+
+
+    async function loadPortfolio() {
+        const container = document.getElementById('portfolio-container');
+        container.innerHTML = '';
+
+        try {
+            const response = await fetch(PORTFOLIO_API_URL);
+            if (!response.ok) {
+                throw new Error(`HTTP Hata kodu: ${response.status}`);
+            }
+            const projectsData = await response.json();
+
+            if (!Array.isArray(projectsData) || projectsData.length === 0) {
+                 container.innerHTML = '<div class="col-md-12 text-center"><p>Henüz kayıtlı proje bulunmuyor.</p></div>';
+                 return;
+            }
+
+            container.setAttribute('data-projects', JSON.stringify(projectsData));
+
+            projectsData.forEach((project) => {
+
+                const title = project.title || "Proje Adı Yok";
+
+                const defaultImageUrl = "/images/default.jpg"; 
+
+                const imageUrl = project.imageUrl ? `/images/${project.imageUrl}` : defaultImageUrl;
+
+                const projectHtml = `
+                    <div class="col-sm-4">
+                        <div class="item portfolio-card"
+                            style="cursor: pointer;"
+                            data-toggle="modal"
+                            data-target="#projectDetailModal"
+                            data-project-id="${project.id}">
+
+                            <img src="${imageUrl}" alt="${title} görseli" />
+
+                            <div class="isotope-overlay" style="display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                                <h4 style="color: #fff; font-size: 16px; text-align: center; text-transform: uppercase;">
+                                    ${title}
+                                </h4>
+                                <span style="color: #fff; font-size: 12px; margin-top: 5px;">Detayları Gör</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                container.innerHTML += projectHtml;
+            });
+
+            $('#projectDetailModal').on('show.bs.modal', function (event) {
+                const button = $(event.relatedTarget); 
+                const projectId = button.data('project-id');
+
+                const projectsJson = container.getAttribute('data-projects');
+                const projects = JSON.parse(projectsJson);
+                 const selectedProject = projects.find(p => p.id == projectId);
+
+                if (selectedProject) {
+                    showProjectModal(selectedProject);
+                }
+            });
+
+        } catch (error) {
+            console.error("Portfolyo verisi yüklenirken bir sorun oluştu:", error);
+            container.innerHTML = '<div class="col-md-12 text-center"><p>Portfolyo projeleri yüklenemedi.</p></div>';
+        }
+    }
+
+    loadPortfolio();
+
+
+     function setupContactForm() {
+         const contactForm = document.getElementById('contactForm');
+
+         if (!contactForm) {
+             console.warn("İletişim formu 'contactForm' ID'si ile bulunamadı.");
+             return;
+         }
+
+         contactForm.addEventListener('submit', async function (event) {            
+             event.preventDefault();
+
+             const submitButton = contactForm.querySelector('button[type="submit"]');
+             const originalButtonText = submitButton.textContent;
+
+             
+             submitButton.disabled = true;
+             submitButton.textContent = 'Gönderiliyor...';
+
+             
+             const data = {
+                 Name: document.getElementById('name').value,
+                 Email: document.getElementById('email').value,
+                 Subject: document.getElementById('subject').value,
+                 Message: document.getElementById('comment').value
+             };
+
+             try {
+                 
+                 const response = await fetch(contactForm.action, {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json',
+                          'Accept': 'application/json'
+                     },
+                     body: JSON.stringify(data)
+                 });
+
+                 if (response.ok) {
+                     
+                     alert('Mesajınız başarıyla gönderildi!');
+                     location.reload();
+                 } else {
+                    
+                     alert('Mesaj gönderilemedi. Lütfen bilgilerinizi kontrol edip tekrar deneyin.');
+                     submitButton.disabled = false;
+                     submitButton.textContent = originalButtonText;
+                 }
+             } catch (error) {
+            
+                 console.error("İletişim formu gönderim hatası:", error);
+                 alert('Bir ağ hatası oluştu. Lütfen daha sonra tekrar deneyin.');
+                 submitButton.disabled = false;
+                 submitButton.textContent = originalButtonText;
+             }
+         });
+     }
+
+     setupContactForm();
+</script>

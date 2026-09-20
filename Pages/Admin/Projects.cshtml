@@ -1,0 +1,233 @@
+﻿@page
+@model PortfolioBackend.Pages.Admin.ProjectsModel
+@{
+    ViewData["Title"] = "Projeler Yönetimi";
+    Layout = "_AdminLayout";
+}
+
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Proje Listesi</h4>
+                <p class="card-description">
+                    Mevcut portfolyo projeleriniz.
+                </p>
+                <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#projectModal" id="btnAddNew">
+                    Yeni Proje Ekle
+                </button>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Proje Adı</th>
+                                <th>Açıklaması</th>
+                                <th>Github Linki</th>
+                                <th>Resim Url</th>
+                                <th>Eylemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="projects-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="projectModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Proje Yönetimi</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="projectForm">
+                    <input type="hidden" id="projectId">
+
+                    <div class="form-group">
+                        <label for="projectTitle">Proje Adı</label>
+                        <input type="text" class="form-control" id="projectTitle" placeholder="Proje Adı">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectDescription">Açıklama</label>
+                        <textarea class="form-control" id="projectDescription" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectLink">Github Linki</label>
+                        <input type="url" class="form-control" id="projectLink" placeholder="https://github.com/...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectImageUrl">Resim URL'si</label>
+                        <input type="url" class="form-control" id="projectImageUrl" placeholder="https://...">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnSaveProject">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        const API_URL_PROJECTS = "/api/projects";
+
+        const MY_API_KEY = "hasret9050!";
+
+        const API_KEY_HEADER = "X-API-Key";
+
+        const tableBody = $("#projects-table-body");
+        const modal = $('#projectModal');
+        const modalTitle = $("#modalTitle");
+
+        $(function() {
+            loadProjects();
+        });
+
+        // 1. LİSTELEME (GET)
+        // Sizin mevcut fonksiyonunuzu koruyoruz, ancak butonları güncelledim
+        function loadProjects() {
+            tableBody.html('<tr><td colspan="5" class="text-center">Projeler yükleniyor...</td></tr>');
+
+            $.ajax({
+                url: API_URL_PROJECTS,
+                type: 'GET',
+                dataType: 'json',
+                success: function(projects) {
+                    tableBody.empty();
+                    if (projects.length === 0) {
+                        tableBody.html('<tr><td colspan="5" class="text-center">Gösterilecek proje bulunamadı.</td></tr>');
+                        return;
+                    }
+
+                    $.each(projects, function(index, project) {
+                        var row = `
+                            <tr>
+                                <td>${project.title}</td>
+                                <td>${project.description}</td>
+                                <td><a href="${project.link}" target="_blank">Link</a></td>
+                                <td>${project.imageUrl}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm btn-edit" data-id="${project.id}">Düzenle</button>
+                                    <button class="btn btn-danger btn-sm btn-delete" data-id="${project.id}">Sil</button>
+                                </td>
+                            </tr>
+                        `;
+                        tableBody.append(row);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    var errorMessage = xhr.status + ': ' + xhr.statusText;
+                    tableBody.html(`<tr><td colspan="5" class="text-center text-danger">Veri yüklenemedi: ${errorMessage}</td></tr>`);
+                }
+            });
+        }
+
+        // 2. YENİ EKLEME (CREATE)
+        // "Yeni Ekle" butonuna tıklanınca modalı hazırla
+        $('#btnAddNew').on('click', function() {
+            resetForm();
+            modalTitle.text("Yeni Proje Ekle");
+        });
+
+        
+        tableBody.on('click', function(event) {
+            const targetButton = $(event.target);
+
+            if (targetButton.hasClass('btn-edit')) {
+                const idToEdit = targetButton.data('id');
+
+                $.ajax({
+                    url: `${API_URL_PROJECTS}/${idToEdit}`, 
+                    type: 'GET',
+                    success: function(data) {
+        
+                        $('#projectId').val(data.id);
+                        $('#projectTitle').val(data.title);
+                        $('#projectDescription').val(data.description);
+                        $('#projectLink').val(data.link);
+                        $('#projectImageUrl').val(data.imageUrl);
+
+                        modalTitle.text("Projeyi Düzenle");
+                        modal.modal('show');
+                    },
+                    error: function(xhr) {
+                        alert("Proje verisi çekilemedi: " + xhr.statusText);
+                    }
+                });
+            }
+
+            if (targetButton.hasClass('btn-delete')) {
+                const idToDelete = targetButton.data('id');
+
+                if (confirm(idToDelete + ' ID numaralı projeyi silmek istediğinizden emin misiniz?')) {
+                    $.ajax({
+                        url: `${API_URL_PROJECTS}/${idToDelete}`,
+                        type: 'DELETE',
+                        headers: { 
+                            [API_KEY_HEADER]: MY_API_KEY
+                        },
+                        success: function(result) {
+                            alert('Proje başarıyla silindi.');
+                            loadProjects();
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Silme işlemi başarısız oldu: ' + error + '. Yetki hatası olabilir.');
+                        }
+                    });
+                }
+            }
+        });
+
+        $('#btnSaveProject').on('click', function() {
+            const id = $('#projectId').val();
+            const projectData = {
+                title: $('#projectTitle').val(),
+                description: $('#projectDescription').val(),
+                link: $('#projectLink').val(),
+                imageUrl: $('#projectImageUrl').val()
+            };
+
+            let httpMethod = 'POST';
+            let fullUrl = API_URL_PROJECTS;
+
+            if (id) {
+                httpMethod = 'PUT';
+                fullUrl = `${API_URL_PROJECTS}/${id}`;
+                projectData.id = parseInt(id);
+            }
+
+            $.ajax({
+                url: fullUrl,
+                type: httpMethod,
+                contentType: 'application/json', 
+                data: JSON.stringify(projectData),
+                headers: { 
+                    [API_KEY_HEADER]: MY_API_KEY
+                },
+                success: function() {
+                    alert('İşlem başarılı!');
+                    modal.modal('hide');
+                    loadProjects();
+                },
+                error: function(xhr) {
+                    alert('Hata oluştu: ' + (xhr.responseJSON?.title || xhr.responseText));
+                }
+            });
+        });
+        function resetForm() {
+            $('#projectForm')[0].reset();
+            $('#projectId').val("");
+        }
+
+    </script>
+}
